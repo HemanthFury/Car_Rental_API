@@ -1,4 +1,3 @@
-
 FROM openjdk:17
 WORKDIR /app
 COPY target/car_rental_api-0.0.1-SNAPSHOT.jar app.jar
