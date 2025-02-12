@@ -8,8 +8,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/cars")
@@ -18,6 +20,7 @@ public class CarController {
     private CarService carService;
 
     @PostMapping("/register")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> addCar(@Valid @RequestBody CarDTO carDTO) {
         log.info("Registering car with brand: {}", carDTO.getBrand());
         ResponseEntity<?> response = carService.addCar(carDTO);
@@ -31,8 +34,8 @@ public class CarController {
         return response;
     }
 
-
     @PutMapping("/update/{carId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateCar(@PathVariable Long carId, @Valid @RequestBody CarDTO carDTO) {
         log.info("Updating car with ID: {}", carId);
         ResponseEntity<?> response = carService.updateCar(carId, carDTO);
@@ -46,8 +49,8 @@ public class CarController {
         return response;
     }
 
-
     @GetMapping("/search")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getAllCars(@RequestParam(required = false) String brand,
                                         @RequestParam(required = false) String model,
                                         @RequestParam(required = false) String type,
@@ -63,5 +66,4 @@ public class CarController {
         log.error("Failed to search cars with parameters");
         return response;
     }
-
 }

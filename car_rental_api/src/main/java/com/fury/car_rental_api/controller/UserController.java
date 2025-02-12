@@ -3,21 +3,22 @@ package com.fury.car_rental_api.controller;
 import com.fury.car_rental_api.model.UserDTO;
 import com.fury.car_rental_api.model.UserResponseDTO;
 import com.fury.car_rental_api.service.UserService;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/users")
@@ -27,6 +28,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> registerUser(@Valid @RequestBody UserDTO userDTO) {
         log.info("Registering user with email: {}", userDTO.getEmail());
         ResponseEntity<?> response = userService.registerUser(userDTO);
@@ -40,8 +42,9 @@ public class UserController {
         return response;
     }
 
-
     @GetMapping("/getUser/{userId}")
+    @PreAuthorize("hasRole('USER')")
+
     public ResponseEntity<?> getUserProfile(@PathVariable Long userId) {
         log.info("Fetching user profile with ID: {}", userId);
         ResponseEntity<?> response = userService.getUserById(userId);
@@ -55,8 +58,6 @@ public class UserController {
         return response;
     }
 
-
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
@@ -66,7 +67,8 @@ public class UserController {
             errors.put(fieldName, errorMessage);
             log.error("Validation error on field {}: {}", fieldName, errorMessage);
         });
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST) .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE) .body(errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .body(errors);
     }
 }
-

@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +28,7 @@ public class BookingController {
     private BookingService bookingService;
 
     @PostMapping("/bookCar")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> createBooking(@Valid @RequestBody BookingDTO bookingDTO) {
         log.info("Creating booking for user ID: {}", bookingDTO.getUserId());
         ResponseEntity<?> response = bookingService.createBooking(bookingDTO);
@@ -41,9 +42,8 @@ public class BookingController {
         return response;
     }
 
-
-
     @DeleteMapping("/delete/{bookingId}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> cancelBooking(@PathVariable Long bookingId) {
         log.info("Cancelling booking with ID: {}", bookingId);
         ResponseEntity<?> response = bookingService.cancelBooking(bookingId);
@@ -57,9 +57,8 @@ public class BookingController {
         return response;
     }
 
-
-
     @GetMapping("/user/{userId}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getAllBookingsForUser(@PathVariable Long userId) {
         log.info("Fetching all bookings for user with ID: {}", userId);
         ResponseEntity<?> response = bookingService.getAllBookingsForUser(userId);
@@ -72,6 +71,7 @@ public class BookingController {
         log.error("Failed to fetch bookings for user with ID: {}", userId);
         return response;
     }
+
 
 
 
