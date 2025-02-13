@@ -28,7 +28,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('UPDATE_DATA')")
     public ResponseEntity<?> registerUser(@Valid @RequestBody UserDTO userDTO) {
         log.info("Registering user with email: {}", userDTO.getEmail());
         ResponseEntity<?> response = userService.registerUser(userDTO);
@@ -57,6 +57,8 @@ public class UserController {
         log.error("Failed to fetch user profile with ID: {}", userId);
         return response;
     }
+
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {

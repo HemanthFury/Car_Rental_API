@@ -20,7 +20,7 @@ public class CarController {
     private CarService carService;
 
     @PostMapping("/register")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('UPDATE_DATA')")
     public ResponseEntity<?> addCar(@Valid @RequestBody CarDTO carDTO) {
         log.info("Registering car with brand: {}", carDTO.getBrand());
         ResponseEntity<?> response = carService.addCar(carDTO);
@@ -35,7 +35,7 @@ public class CarController {
     }
 
     @PutMapping("/update/{carId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('UPDATE_DATA')")
     public ResponseEntity<?> updateCar(@PathVariable Long carId, @Valid @RequestBody CarDTO carDTO) {
         log.info("Updating car with ID: {}", carId);
         ResponseEntity<?> response = carService.updateCar(carId, carDTO);

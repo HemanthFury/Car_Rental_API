@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 public interface UserService {
     ResponseEntity<?> registerUser(UserDTO userDTO);
     ResponseEntity<?> getUserById(Long userId);
+
+
 }
 
 
